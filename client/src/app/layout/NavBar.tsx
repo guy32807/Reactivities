@@ -1,18 +1,16 @@
 import { Group } from "@mui/icons-material";
-import { AppBar, Box, Button, Container, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Container, MenuItem, Toolbar, Typography } from "@mui/material";
+import { NavLink } from "react-router";
+import MenuItemLink from "../shared/components/MenuItemLink";
 
-type Props = {
-  openForm: () => void;
-} 
-
-export default function NavBar({openForm}: Props) {
+export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
     <AppBar position="static" sx={{backgroundImage: 'linear-gradient(to right, #4A90E2, #9013FE)'}}>
         <Container maxWidth="xl">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
            <Box>
-                <MenuItem sx={{ display: 'flex', gap: 2 }}>
+                <MenuItem component={NavLink} to='/' sx={{ display: 'flex', gap: 2 }}>
                     <Group fontSize="large" /> 
                     <Typography variant="h6" fontWeight='bold'>
                         ActivityHub
@@ -20,12 +18,21 @@ export default function NavBar({openForm}: Props) {
                 </MenuItem>
            </Box>
             <Box sx={{ display: 'flex' }}>
-                <MenuItem sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button color="inherit" sx={{ mr: 2, fontWeight: 'bold' }}>Activities</Button>
-                    <Button color="inherit" sx={{ fontWeight: 'bold' }}>Login</Button>
-
-                </MenuItem>
-                <Button onClick={openForm} size="large" variant="contained" color="warning" sx={{ mr: 2, fontWeight: 'bold' }}>Create Activity</Button>
+                <MenuItemLink  to='/activities'>
+                    <Typography variant="h6" fontWeight='bold'>
+                        Activities
+                    </Typography>
+                </MenuItemLink>
+                <MenuItemLink  to='/createActivity' >
+                    <Typography variant="h6" fontWeight='bold'>
+                        Create Activity
+                    </Typography>
+                </MenuItemLink>
+                <MenuItemLink  to='/userMenu' >
+                    <Typography variant="h6" fontWeight='bold'>
+                        User Menu
+                    </Typography>
+                </MenuItemLink>
             </Box>
       </Toolbar>
         </Container>

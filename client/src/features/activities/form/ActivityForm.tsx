@@ -1,13 +1,12 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
+import { useNavigate, useParams } from "react-router";
 
-type Props = {
-     closeForm: () => void;
-     activity?: Activity;
-    }
 
-export default function ActivityForm({closeForm, activity}: Props) {
-    const {updateActivity, createActivity, deleteActivity} = useActivities();
+export default function ActivityForm() {
+    const {id} = useParams();
+    const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id);
+    const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -20,16 +19,20 @@ export default function ActivityForm({closeForm, activity}: Props) {
         if(activity) {
             data.id = activity.id;
             await updateActivity.mutateAsync(data as unknown as Activity);
-            closeForm();
+            navigate(`/activities/${activity.id}`);
         }else{
-            await createActivity.mutateAsync(data as unknown as Activity);
-            closeForm();
+            createActivity.mutate(data as unknown as Activity, {
+                onSuccess: (id) => {
+                    navigate(`/activities/${id}`);
+                }
+            });
         }
     }
+    if(isLoadingActivity) return <Typography>Loading activity...</Typography>
   return (
     <Paper sx={{borderRadius: 3, padding: 3}}>
         <Typography variant="h4" gutterBottom color="primary">
-            Create Activity
+            {activity ? 'Edit Activity' : 'Create Activity'}
         </Typography>
         <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField name="title" label="Title" variant="outlined" defaultValue={activity?.title}  fullWidth />
@@ -44,7 +47,7 @@ export default function ActivityForm({closeForm, activity}: Props) {
             <TextField name="city" label="City" variant="outlined" fullWidth defaultValue={activity?.city} />
             <TextField name="venue" label="Venue" variant="outlined" fullWidth defaultValue={activity?.venue}/>
             <Box display='flex' justifyContent='end' mt={2}>
-            <Button onClick={closeForm} variant="outlined" color="secondary" sx={{ml: 2}}>
+            <Button variant="outlined" color="secondary" sx={{ml: 2}}>
                     Cancel
                 </Button>
                 <Button variant="contained" color="primary" type="submit" disabled={updateActivity.isPending || createActivity.isPending} sx={{ml: 2}}>
