@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Application.Activities.Queries;
+using FluentValidation;
+using Application.Activities.Validators;
+using Application.Core;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +16,19 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<GetActivityList.Query>();
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+});
 builder.Services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
+builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
+builder.Services.AddTransient<ExceptionMiddleware>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(policy => policy
     .AllowAnyHeader()
     .AllowAnyMethod()
