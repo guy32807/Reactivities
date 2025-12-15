@@ -2,7 +2,7 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";
-import { activitySchema, type ActivitySchema } from "../../../lib/schemas/ActivitySchema";
+import { activitySchema, type ActivitySchema } from "../../../lib/schemas/activitySchema";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextInput from "../../../app/shared/components/TextInput";
