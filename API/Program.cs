@@ -9,6 +9,9 @@ using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Application.Interfaces;
+using Infrastructure;
+using Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssemblyContaining<GetActivityList.Query>();
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
+builder.Services.AddScoped<IUserAccessor, UserAccessor>();
 builder.Services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
 builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
 builder.Services.AddTransient<ExceptionMiddleware>();
@@ -46,6 +50,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Allow over HTTP
 });
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("IsActivityHost", policy =>
+    {
+        policy.Requirements.Add(new IsHostRequirement());
+    });
+});
+builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
 var app = builder.Build();
 
