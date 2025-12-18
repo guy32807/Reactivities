@@ -12,9 +12,7 @@ export const activitySchema = z.object({
   category: requiredString("Category").max(50, {
     message: "Category must be at most 50 characters long",
   }),
-  date: z.date().refine((date) => date > new Date(), {
-    message: "Date must be in the future",
-  }),
+  date: z.date() ,
   location: z.object({
     venue: requiredString("Venue"),
     city: z.string().optional(),
@@ -23,4 +21,4 @@ export const activitySchema = z.object({
   }),
 });
 
-export type ActivitySchema = z.infer<typeof activitySchema>;
+export type ActivitySchema = z.input<typeof activitySchema>;

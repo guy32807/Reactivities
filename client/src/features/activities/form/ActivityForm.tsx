@@ -39,27 +39,20 @@ export default function ActivityForm() {
     }, [activity, reset]);
 
     const onSubmit = async (data: ActivitySchema) => {
-        const { location, ...activityData } = data;
-        const flattenedData = { ...activityData, ...location };
+        const {location, ...rest} = data; 
+        const flattenedData = {...rest, ...location};
         try {
             if (activity) {
-                await updateActivity.mutateAsync({ ...activity, ...flattenedData },
-                    {
-                        onSuccess: () => {
-                            navigate(`/activities/${activity.id}`);
-                        }
-                    }
-                );
+                updateActivity.mutate({...activity, ...flattenedData}, {
+                    onSuccess: () => navigate(`/activities/${activity.id}`)
+                })
             } else {
-                await createActivity.mutateAsync(flattenedData,{
-                        onSuccess: (id) => {
-                            navigate(`/activities/${id}`);
-                        }
-                    }
-                );
+                createActivity.mutate(flattenedData, {
+                    onSuccess: (id) => navigate(`/activities/${id}`)
+                })
             }
         } catch (error) {
-            console.error("Error updating activity:", error);
+            console.log(error);
         }
     }
 
@@ -70,13 +63,13 @@ export default function ActivityForm() {
                 {activity ? 'Edit Activity' : 'Create Activity'}
             </Typography>
             <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <TextInput label="Title" control={control} defaultValue={activity?.title} name='title' />
-                <TextInput label="Description" control={control} defaultValue={activity?.description} name='description' multiline rows={4} />
+                <TextInput label="Title" control={control}  name='title' />
+                <TextInput label="Description" control={control}  name='description' multiline rows={4} />
                 <Box display='flex' gap={3}>
-                    <SelectInput items={categoryOptions} label="Category" control={control} defaultValue={activity?.category} name='category' />
-                    <DateTimeInput label="Date" control={control} name='date' defaultValue={activity?.date} />
+                    <SelectInput items={categoryOptions} label="Category" control={control}  name='category' />
+                    <DateTimeInput label="Date" control={control} name='date'/>
                 </Box>
-                <LocationInput control={control} label="Enter the location" name='location' defaultValue={activity?.city} />
+                <LocationInput control={control} label="Enter the location" name='location' />
                 <Box display='flex' justifyContent='end' mt={2}>
                     <Button variant="outlined" color="secondary" sx={{ ml: 2 }}>
                         Cancel
