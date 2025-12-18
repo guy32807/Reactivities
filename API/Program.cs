@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Application.Interfaces;
 using Infrastructure;
 using Infrastructure.Security;
+using Infrastructure.Photos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,14 +51,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Allow over HTTP
 });
-builder.Services.AddAuthorization(opt =>
-{
-    opt.AddPolicy("IsActivityHost", policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("IsActivityHost", policy =>
     {
         policy.Requirements.Add(new IsHostRequirement());
     });
-});
 builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 var app = builder.Build();
 
