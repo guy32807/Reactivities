@@ -9,9 +9,6 @@ export const useAccount = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
-    
-
-
     const loginUser = useMutation({
       mutationFn: async (creds: LoginSchema) => {
           await agent.post('/login?useCookies=true', creds);

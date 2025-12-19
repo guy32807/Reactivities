@@ -40,7 +40,13 @@ export default function ActivityCard({ activity }: Prop) {
         }}
       >
         <CardHeader
-          avatar={<Avatar sx={{ height: 80, width: 80 }} />}
+          avatar={
+            <Avatar
+              sx={{ height: 80, width: 80 }}
+              src={activity.hostImageUrl}
+              alt="image of host"
+            />
+          }
           title={activity.title}
           slotProps={{ fontWeight: "bold", fontSize: 20 }}
           subheader={
@@ -54,7 +60,12 @@ export default function ActivityCard({ activity }: Prop) {
         />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mr: 2 }}>
           {(activity.isHost || activity.isGoing) && (
-            <Chip label={label} variant="outlined" color={color} sx={{ borderRadius: 2 }} />
+            <Chip
+              label={label}
+              variant="outlined"
+              color={color}
+              sx={{ borderRadius: 2 }}
+            />
           )}
           {activity.isCancelled && (
             <Chip label="Cancelled" color="error" sx={{ borderRadius: 2 }} />
