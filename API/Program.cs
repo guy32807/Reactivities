@@ -13,11 +13,12 @@ using Application.Interfaces;
 using Infrastructure;
 using Infrastructure.Security;
 using Infrastructure.Photos;
+using API.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddSignalR();
 builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -72,6 +73,7 @@ app.UseCors(policy => policy
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGroup("api").MapIdentityApi<User>();
+app.MapHub<CommentHub>("/comments");
 app.MapControllers();
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
